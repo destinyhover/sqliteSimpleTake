@@ -1,0 +1,66 @@
+# --- ОС и редакторы ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# --- Go артефакты ---
+/bin/
+/dist/
+/build/
+/out/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.cover
+coverage.out
+
+# go work (если не используешь его осознанно в репо)
+go.work
+go.work.sum
+
+# --- Логи, временные ---
+*.log
+*.tmp
+*.cache/
+tmp/
+.cache/
+*.pid
+
+# --- Конфиги/секреты ---
+.env
+.env.*
+*.local.yaml
+config.local.*.yaml
+secrets.yaml
+*.key
+*.pem
+*.p12
+
+# --- SQLite локальные файлы ---
+*.db
+*.sqlite
+*.sqlite3
+*.db3
+# журналы/буферы SQLite
+*-journal
+*-wal
+*-shm
+
+# --- PostgreSQL/MySQL локальные каталоги данных (если поднимаешь локально) ---
+pgdata/
+postgres-data/
+mysql-data/
+db-data/
+
+# --- Docker/Compose артефакты ---
+/.volumes/
+/docker-data/
+*.tar
+
+# --- Инструменты миграций (сгенерённые) ---
+migrations/*_gen/*
