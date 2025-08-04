@@ -89,7 +89,7 @@ func AddUser(d Userdata) int {
 		return userID
 	}
 	insertStmt = `INSERT INTO Userdata values (?,?,?,?)`
-	_, err = db.Exec(insertStmt, userID, d.Name, d.Surname, d, d.Description)
+	_, err = db.Exec(insertStmt, userID, d.Name, d.Surname, d.Description)
 	if err != nil {
 		fmt.Println("db.Exec()", err)
 		return -1
