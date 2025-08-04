@@ -15,6 +15,7 @@ var (
 
 type Userdata struct {
 	ID          int
+	Username    string
 	Name        string
 	Surname     string
 	Description string
@@ -42,6 +43,10 @@ func exists(username string) int {
 	userID := -1
 	stmt := fmt.Sprintf(`SELECT ID FROM Users where Username = '%s'`, username)
 	rows, err := db.Query(stmt)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
 	defer rows.Close()
 
 	for rows.Next() {
@@ -70,7 +75,7 @@ func AddUser(d Userdata) int {
 	defer db.Close()
 	userID := exists(d.Username)
 	if userID != -1 {
-		fmt.Println("User already exyusts:", d.Username)
+		fmt.Println("User already exists:", d.Username)
 		return -1
 	}
 	insertStmt := `INSERT INTO Users values (NULL, ?)`
@@ -79,7 +84,7 @@ func AddUser(d Userdata) int {
 		fmt.Println(err)
 		return -1
 	}
-	userID = exist(d.Username)
+	userID = exists(d.Username)
 	if userID == -1 {
 		return userID
 	}
@@ -99,12 +104,11 @@ func DeleteUser(id int) error {
 		return err
 	}
 	defer db.Close()
-
-	res, err := db.Exec(`DELETE FROM Users WHERE id = ?`, id)
+	// Delete from Users
+	res, err := db.Exec(`DELETE FROM Users WHERE ID = ?`, id)
 	if err != nil {
 		return err
 	}
-
 	n, err := res.RowsAffected()
 	if err != nil {
 		return err
@@ -112,6 +116,20 @@ func DeleteUser(id int) error {
 	if n == 0 {
 		return fmt.Errorf("user %d not found", id)
 	}
+
+	// Delete from Userdata
+	res, err = db.Exec(`DELETE FROM Userdata WHERE UserID = ?`, id)
+	if err != nil {
+		return err
+	}
+	n, err = res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if n == 0 {
+		return fmt.Errorf("user %d not found", id)
+	}
+
 	return nil
 }
 
@@ -125,7 +143,9 @@ func ListUsers() ([]Userdata, error) {
 	defer db.Close()
 
 	rows, err := db.Query(`SELECT ID, Username, Name, Surname, Description FROM Users, Userdata WHERE Users.ID = Userdata.UserID`)
-
+	if err != nil {
+		return nil, err
+	}
 	for rows.Next() {
 		var id int
 		var username string
@@ -150,7 +170,7 @@ func UpdateUser(d Userdata) error {
 	}
 	defer db.Close()
 
-	userID := exist(d.Username)
+	userID := exists(d.Username)
 	if userID == -1 {
 		return errors.New("User does not exist")
 	}
