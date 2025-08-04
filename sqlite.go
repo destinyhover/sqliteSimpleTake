@@ -29,7 +29,7 @@ func openConnection() (*sql.DB, error) {
 }
 
 // The function returns the User ID of the username and -1 if the user does not exist
-func exist(username string) int {
+func exists(username string) int {
 	username = strings.ToLower(username)
 
 	db, err := openConnection()
