@@ -189,3 +189,28 @@ func UpdateUser(d Userdata) error {
 	}
 	return nil
 }
+
+// SearchUsername() do search with string Username and renurns an error
+func SearchUsername(username string) (d Userdata, err error) {
+	username = strings.ToLower(username)
+	db, err := openConnection()
+	if err != nil {
+		return d, fmt.Errorf("SearchUsername()")
+	}
+	defer db.Close()
+
+	UserID := exists(username)
+	if UserID == -1 {
+		return d, fmt.Errorf("User %s does not exist", username)
+	}
+
+	stmt := (`SELECT ID, Username, Name, Surname, Description FROM Userdata JOIN Users ON Users.ID = Userdata.UserID WHERE Userdata.UserID = ?;`)
+
+	row := db.QueryRow(stmt, UserID)
+
+	err = row.Scan(&d.ID, &d.Username, &d.Name, &d.Surname, &d.Description)
+	if err != nil {
+		return d, err
+	}
+	return d, nil
+}
